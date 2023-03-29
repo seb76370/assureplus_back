@@ -1,0 +1,36 @@
+#!/bin/bash
+
+NameProject=$1
+
+echo Installing virtualenv...
+pip install virtualenv
+
+echo Creating virtual environment...
+virtualenv .venv
+
+echo Activating virtual environment...
+source .venv/Scripts/activate
+
+echo Update pip for install...
+pip install --upgrade pip
+
+echo Install django 3.1.6...
+pip install django==3.1.6
+
+echo Package Listing...
+pip list
+
+echo Start new project django witch src file...
+django-admin startproject $NameProject
+
+echo Going to the src file...
+cd $NameProject
+
+echo Modifcation du repertoire
+mv $NameProject src
+
+
+echo Now enjoy !...
+code .
+
+echo restart Shell
