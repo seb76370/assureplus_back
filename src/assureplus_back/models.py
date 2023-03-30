@@ -10,19 +10,18 @@ class Users(models.Model):
     street = models.CharField(max_length=30)
     zipcode = models.CharField(max_length=30)
     city = models.CharField(max_length=30)
-    contract_number = models.IntegerField()
+    contract_number = models.IntegerField(unique=True)
 
 class Sinitres(models.Model):
-    users = models.ForeignKey(Users, on_delete=models.CASCADE, related_name='sinitres',null = True)
+    user = models.ForeignKey(Users, on_delete=models.CASCADE, related_name='sinitre',null = True)
     description = models.TextField()
 
 class Comments(models.Model):
-    sinitres = models.ForeignKey(Sinitres, on_delete=models.CASCADE, related_name='comment',null = True)
+    sinitre = models.ForeignKey(Sinitres, on_delete=models.CASCADE, related_name='comment',null = True)
     comment = models.CharField(max_length=255)
     date = models.DateField()
 
-
 class files_upload(models.Model):
-    sinitres = models.ForeignKey(Sinitres, on_delete=models.CASCADE, related_name='files_upload',null = True)
+    sinitre = models.ForeignKey(Sinitres, on_delete=models.CASCADE, related_name='files_upload',null = True)
     title = models.CharField(max_length=255)
     file = models.FileField(upload_to='uploads/%Y/%m/%d/')
