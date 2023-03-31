@@ -1,0 +1,46 @@
+{
+    "id": 6,
+    "first_name": "FABIENNE",
+    "last_name": "BAUDET",
+    "street": "2 rue du vent de Suet",
+    "zipcode": "76630",
+    "city": "PETIT CAUX",
+    "date_time": "2023-10-12T14:15:46Z",
+    "contract_number": 789456744,
+    "sinitres": [
+        {
+            "id": 3,
+            "user_id": 6,
+            "description": "dezdezjdhfezikdfhezl\nfdeznjkfdhnezfnhezmlf\nndfjeznbhfklemzfnemzlof",
+            "date_time": null
+        },
+        {
+            "id": 4,
+            "user_id": 6,
+            "description": "dezdezjdhfezikdfhezl\nfffffffffffff\nndfjeznbhfklemzfnemzlof",
+            "date_time": null
+        }
+    ],
+    "comments": [
+        {
+            "id": 1,
+            "sinitre_id": 3,
+            "comment": "test comments",
+            "date_time": "2022-03-10T00:00:00Z"
+        }
+    ],
+    "files": [
+        {
+            "id": 11,
+            "sinitre_id": 3,
+            "title": "test-title",
+            "file": "uploads/2023/03/30/10718971_4mWVfhN.jpg"
+        },
+        {
+            "id": 12,
+            "sinitre_id": 3,
+            "title": "test-title",
+            "file": "uploads/2023/03/30/1430721583_8307_vqqF3XB.jpg"
+        }
+    ]
+}

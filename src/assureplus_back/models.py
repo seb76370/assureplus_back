@@ -11,15 +11,17 @@ class Users(models.Model):
     zipcode = models.CharField(max_length=30)
     city = models.CharField(max_length=30)
     contract_number = models.IntegerField(unique=True)
+    date_time = models.DateTimeField(null=True)
 
 class Sinitres(models.Model):
     user = models.ForeignKey(Users, on_delete=models.CASCADE, related_name='sinitre',null = True)
     description = models.TextField()
+    date_time = models.DateTimeField(null=True)
 
 class Comments(models.Model):
     sinitre = models.ForeignKey(Sinitres, on_delete=models.CASCADE, related_name='comment',null = True)
     comment = models.CharField(max_length=255)
-    date = models.DateField()
+    date_time = models.DateTimeField(null=True)
 
 class files_upload(models.Model):
     sinitre = models.ForeignKey(Sinitres, on_delete=models.CASCADE, related_name='files_upload',null = True)

@@ -1,3 +1,4 @@
+import json
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 
@@ -13,13 +14,13 @@ def index(request):
 
 
 @csrf_exempt
-def get_user_sinitre(request):
-    user_id = 6
+def get_user_sinitre(request,id):
+
     try:
-            user = Users.objects.get(id=6)
-            sinitres = Sinitres.objects.filter(user=user_id)
-            comments = Comments.objects.filter(sinitre__user=user_id)
-            files = files_upload.objects.filter(sinitre__user=user_id)
+            user = Users.objects.get(id=id)
+            sinitres = Sinitres.objects.filter(user=id)
+            comments = Comments.objects.filter(sinitre__user=id)
+            files = files_upload.objects.filter(sinitre__user=id)
 
             # Créer un dictionnaire pour stocker les données de l'utilisateur et les données associées
             user_data = {
@@ -29,6 +30,7 @@ def get_user_sinitre(request):
                 'street': user.street,
                 'zipcode': user.zipcode,
                 'city': user.city,
+                'date_time': user.date_time,
                 'contract_number': user.contract_number,
                 'sinitres': list(sinitres.values()),
                 'comments': list(comments.values()),
@@ -50,6 +52,47 @@ def save_user(request):
             return HttpResponse('Le formulaire UsersForm a été soumis avec succès !')
         else:
             return HttpResponse("Form UsersForm Invalide")
+                                
+@csrf_exempt
+def modify_user(request,id):
+    try:
+        user = Users.objects.get(id=id)
+    except Exception:
+        return HttpResponse("user unknow")
+    
+    print(user)
+    if request.method == 'POST':
+        form = UsersForm(request.POST,instance=user)
+        if form.is_valid():
+            form.save()
+            return HttpResponse('Le formulaire UsersForm a été update avec succès !')
+        else:
+            errors = form.errors.as_data()
+            return HttpResponse(errors)
+        
+@csrf_exempt
+def delete_user(request,id):
+    try:
+        user = Users.objects.get(id=id)
+    except Exception:
+        return HttpResponse("user unknow")
+
+    if request.method != 'DELETE':
+        return HttpResponse("Not DELETE Request")
+    
+    datas:dict = get_user_sinitre(None, id)
+
+    print(type(datas))
+    files_path:str = f'./archives/user_{id}_contract_{user.contract_number}.json'
+    # print(files_path)
+    json_object = json.loads(datas.content)
+    print(json_object)
+    with open(files_path, "w",encoding='utf8') as outfile:
+        json.dump(json_object, outfile, indent= 4)
+    user.delete()
+    return HttpResponse('Le formulaire UsersForm a été update avec succès !')
+
+
 
 @csrf_exempt
 def save_sinistre(request):
@@ -75,26 +118,22 @@ def save_comment(request):
 
 @csrf_exempt
 def upload_file(request):
-    if request.method == 'POST':
-        form = UploadFileForm(request.POST, request.FILES)
-        if form.is_valid():
-            # Récupération des données du formulaire
-            sinitre_id = form.cleaned_data['sinistre']
-            print(sinitre_id)
-            s = Sinitres.objects.get(id=sinitre_id)
-            title = form.cleaned_data['title']
-            files = request.FILES.getlist('file')
-            
-            # Création d'un nouvel objet files_upload pour chaque fichier
-            for file in files:
-                new_file = files_upload(sinitre=s, title=title, file=file)
-                new_file.save()
-            return HttpResponse('Le formulaire upload a été soumis avec succès !')
-        else:
-            errors = form.errors.as_data()
-            return HttpResponse(errors)
-
-def handle_uploaded_file(file, title):
-    # Lire le contenu du fichier et le stocker dans la base de données
-    instance = files_upload(title=title, file=file)
-    instance.save()
+    if request.method != 'POST':
+        return HttpResponse('not a Post Request')
+    form = UploadFileForm(request.POST, request.FILES)
+    if form.is_valid():
+        # Récupération des données du formulaire
+        sinitre_id = form.cleaned_data['sinistre']
+        print(sinitre_id)
+        s = Sinitres.objects.get(id=sinitre_id)
+        title = form.cleaned_data['title']
+        files = request.FILES.getlist('file')
+        
+        # Création d'un nouvel objet files_upload pour chaque fichier
+        for file in files:
+            new_file = files_upload(sinitre=s, title=title, file=file)
+            new_file.save()
+        return HttpResponse('Le formulaire upload a été soumis avec succès !')
+    else:
+        errors = form.errors.as_data()
+        return HttpResponse(errors)
