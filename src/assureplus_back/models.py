@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 
 class Users(models.Model):
@@ -7,11 +8,12 @@ class Users(models.Model):
 
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
+    email= models.EmailField(null=True)
     street = models.CharField(max_length=30)
     zipcode = models.CharField(max_length=30)
     city = models.CharField(max_length=30)
     contract_number = models.IntegerField(unique=True)
-    date_time = models.DateTimeField(null=True)
+    date_time = models.DateTimeField(default=datetime.now,)
 
 class Sinitres(models.Model):
     user = models.ForeignKey(Users, on_delete=models.CASCADE, related_name='sinitre',null = True)

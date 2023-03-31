@@ -1,21 +1,27 @@
 import json
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
-
-from assureplus_back.models import  files_upload
+from django.contrib.auth.decorators import login_required, permission_required
 from .forms import SinitresForm, UploadFileForm, UsersForm, CommentsForm
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import Comments, Sinitres, Users
-
+from .models import Comments, Sinitres, Users, files_upload
+from .auth import create_token
 from pprint import pprint
+
 def index(request):
+    user = Users.objects.get(id=7)
+    print(user)
+    print(create_token(user))
     return HttpResponse("Welcome to Assureplus API")
 
+def not_connected(request):
+    return JsonResponse({'code':401,'message':"User not connected"})
 
+##### Section user  #####
 @csrf_exempt
+@login_required(login_url='/not_connected/', redirect_field_name='next')
 def get_user_sinitre(request,id):
-
     try:
             user = Users.objects.get(id=id)
             sinitres = Sinitres.objects.filter(user=id)
@@ -41,8 +47,6 @@ def get_user_sinitre(request,id):
     except Users.DoesNotExist:
         return JsonResponse({'error': 'User not found'}, status=404)
 
-    return HttpResponse(sinistres)
-
 @csrf_exempt
 def save_user(request):
     if request.method == 'POST':
@@ -51,16 +55,17 @@ def save_user(request):
             form.save()
             return HttpResponse('Le formulaire UsersForm a été soumis avec succès !')
         else:
-            return HttpResponse("Form UsersForm Invalide")
+            errors = form.errors.as_data()
+            return HttpResponse(errors)
                                 
 @csrf_exempt
+@login_required(login_url='/not_connected/', redirect_field_name='next')
 def modify_user(request,id):
     try:
         user = Users.objects.get(id=id)
     except Exception:
         return HttpResponse("user unknow")
-    
-    print(user)
+
     if request.method == 'POST':
         form = UsersForm(request.POST,instance=user)
         if form.is_valid():
@@ -93,7 +98,7 @@ def delete_user(request,id):
     return HttpResponse('Le formulaire UsersForm a été update avec succès !')
 
 
-
+##### Section user  #####
 @csrf_exempt
 def save_sinistre(request):
     if request.method == 'POST':
@@ -103,7 +108,40 @@ def save_sinistre(request):
             return HttpResponse('Le formulaire save_sinistre a été soumis avec succès !')
         else:
             return HttpResponse("Form save_sinistre Invalide")
-    
+
+@csrf_exempt
+def delete_sinistre(request,id):
+    try:
+        sinitre = Sinitres.objects.get(id=id)
+    except Exception:
+        return HttpResponse("Sinitre unknow")
+
+    if request.method != 'DELETE':
+        return HttpResponse("Not DELETE Request")
+    print(sinitre)
+    sinitre.delete()
+    return HttpResponse('Le formulaire Sinitre a été supprimer avec succès !')
+
+@csrf_exempt
+@login_required(login_url='/not_connected/', redirect_field_name='next')
+def modify_sinistre(request,id):
+    try:
+        sinitre = Sinitres.objects.get(id=id)
+        print(sinitre)
+    except Exception:
+        return HttpResponse("sinitre unknow")
+
+    if request.method == 'POST':
+        form = SinitresForm(request.POST,instance=sinitre)
+        if form.is_valid():
+            form.save()
+            return HttpResponse('Le formulaire SinistreForm a été update avec succès !')
+        else:
+            errors = form.errors.as_data()
+            return HttpResponse(errors)
+
+
+##### Section comment  #####  
 @csrf_exempt
 def save_comment(request):
     if request.method == 'POST':
@@ -116,6 +154,7 @@ def save_comment(request):
             return HttpResponse(errors)
 
 
+##### Section user  #####
 @csrf_exempt
 def upload_file(request):
     if request.method != 'POST':
@@ -124,7 +163,6 @@ def upload_file(request):
     if form.is_valid():
         # Récupération des données du formulaire
         sinitre_id = form.cleaned_data['sinistre']
-        print(sinitre_id)
         s = Sinitres.objects.get(id=sinitre_id)
         title = form.cleaned_data['title']
         files = request.FILES.getlist('file')

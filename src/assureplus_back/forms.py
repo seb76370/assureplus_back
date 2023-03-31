@@ -2,10 +2,10 @@ from django import forms
 from .models import Users, Sinitres, Comments, files_upload
 
 class UsersForm(forms.ModelForm):
-    class Meta:
+    class Meta:     
         model = Users
-        fields = ('first_name', 'last_name', 'street', 'zipcode',
-                   'city', 'contract_number','date_time')
+        fields = ('first_name', 'last_name', 'email','street', 'zipcode',
+                   'city', 'contract_number')
 
 class SinitresForm(forms.ModelForm):
     class Meta:
