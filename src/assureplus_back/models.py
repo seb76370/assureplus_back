@@ -25,6 +25,9 @@ class Comments(models.Model):
     date_time = models.DateTimeField(default=datetime.now,)
 
 class files_upload(models.Model):
+    def __str__(self):
+        return f"./{str(self.file)}"
+    
     sinistre = models.ForeignKey(Sinistres, on_delete=models.CASCADE, related_name='files_upload',null = True)
     title = models.CharField(max_length=255)
     file = models.FileField(upload_to='uploads/%Y/%m/%d/')
