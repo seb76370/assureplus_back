@@ -55,9 +55,18 @@ def get_user_sinistre(request,id):
 def save_user(request):
     if request.method == 'POST':
         form = UsersForm(request.POST)
+        password = request.POST.get('password')
         if form.is_valid():
+            print("VALIDDDDDD")
+
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
+            email = form.cleaned_data['email']
+            if User.objects.filter(email=email).exists():
+                return HttpResponse('Email already exists')
+
+            User.objects.create_user(username=f"{first_name} {last_name}", password=password, email=email)
             form.save()
-            # user = User.objects.create_user(username='mon_utilisateur', password='mon_mot_de_passe')
             return HttpResponse('Le formulaire UsersForm a été soumis avec succès !')
         else:
             errors = form.errors.as_data()

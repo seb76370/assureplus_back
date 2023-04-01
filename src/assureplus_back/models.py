@@ -8,7 +8,7 @@ class Users(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     email= models.EmailField(null=True,unique=True)
-    street = models.CharField(max_length=30)
+    street = models.CharField(max_length=100)
     zipcode = models.CharField(max_length=30)
     city = models.CharField(max_length=30)
     contract_number = models.IntegerField(unique=True)
