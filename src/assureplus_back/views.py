@@ -16,9 +16,6 @@ from pprint import pprint
 
 #region commons
 def index(request):
-    user = Users.objects.get(id=7)
-    print(user)
-    print(create_token(user))
     return HttpResponse("Welcome to Assureplus API")
 
 def not_connected(request):
