@@ -1,5 +1,5 @@
 from django import forms
-from .models import Users, Sinitres, Comments, files_upload
+from .models import Users, Sinistres, Comments, files_upload
 
 class UsersForm(forms.ModelForm):
     class Meta:     
@@ -7,15 +7,15 @@ class UsersForm(forms.ModelForm):
         fields = ('first_name', 'last_name', 'email','street', 'zipcode',
                    'city', 'contract_number')
 
-class SinitresForm(forms.ModelForm):
+class SinistresForm(forms.ModelForm):
     class Meta:
-        model = Sinitres
-        fields = ('user', 'description','date_time',)
+        model = Sinistres
+        fields = ('user', 'description',)
 
 class CommentsForm(forms.ModelForm):
     class Meta:
         model = Comments
-        fields = ('sinitre', 'comment','date_time',)
+        fields = ('sinistre', 'comment',)
 from django import forms
 
 class MultiFileField(forms.FileField):
