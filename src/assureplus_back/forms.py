@@ -4,6 +4,7 @@ from .models import Users, Sinistres, Comments, files_upload
 class UsersForm(forms.ModelForm):
     class Meta:     
         model = Users
+        exclude = ['password']
         fields = ('first_name', 'last_name', 'email','street', 'zipcode',
                    'city', 'contract_number')
 
