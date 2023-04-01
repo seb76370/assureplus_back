@@ -13,7 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from .views import delete_comment, delete_sinistre, get_user_sinistre, index, modify_comment, modify_sinistre
+from .views import delete_comment, delete_file, delete_sinistre, get_user_sinistre, index, modify_comment, modify_sinistre
 from .views import save_user, save_comment, modify_user, delete_user, not_connected
 from .views import upload_file,save_sinistre
 
@@ -46,6 +46,7 @@ urlpatterns = [
 
 #region upload
     path('upload_file/', upload_file, name ='upload_file'),
+    path('delete_file/<int:id>', delete_file, name ='delete_file'),
 #endregion
 
 #region auth admin

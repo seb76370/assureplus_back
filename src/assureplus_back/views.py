@@ -1,4 +1,5 @@
 import json
+import os
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
@@ -7,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .models import Comments, Sinistres, Users, files_upload
 from django.contrib.auth.models import User
+from django.core.files.storage import default_storage
 
 from .auth import create_token
 from pprint import pprint
@@ -215,4 +217,18 @@ def upload_file(request):
     else:
         errors = form.errors.as_data()
         return HttpResponse(errors)
+    
+@csrf_exempt   
+def delete_file(request,id):
+    if request.method != 'DELETE':
+        return HttpResponse('not a DELETE Request')
+    try:
+        file_upload = files_upload.objects.get(id=id)
+        file_upload.delete()
+        os.remove (str(file_upload))
+    except Exception:
+        return JsonResponse({"statusCode":"404","message":'Le fichier n\'existe pas !'})
+    
+    return HttpResponse('Le formulaire upload a été supprimer avec succès !')
+
 #endregion
