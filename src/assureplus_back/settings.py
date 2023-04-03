@@ -28,11 +28,18 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['193.46.198.252','127.0.0.1']
+CORS_ORIGIN_ALLOW_ALL = False
 
-CORS_ORIGIN_WHITELIST = [
-    'http://localhost:4200',
-]
+CORS_ALLOW_METHODS = ['GET','POST','OPTIONS','PUT','DELETE']
+
+CORS_ALLOW_HEADERS = ['accept','accept-encoding','authorization','content-type','dnt','origin','user-agent','x-csrftoken','x-requested-with']
+
+CORS_ALLOW_CREDENTIALS = True
+
+# CORS_ORIGIN_WHITELIST = [
+#     'http://localhost:4200',
+#     'http://127.0.0.1:4200',
+# ]
 
 # Application definition
 
@@ -47,7 +54,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'dj_rest_auth',
-    'assureplus_back'
+    'assureplus_back',
+    'user_api',
 ]
 
 MIDDLEWARE = [
@@ -141,3 +149,10 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+ALLOWED_HOSTS = ['*']
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+
+AUTH_USER_MODEL = 'user_api.Users'

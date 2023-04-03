@@ -10,7 +10,7 @@ from .models import Comments, Sinistres, Users, files_upload
 from django.contrib.auth.models import User
 from django.core.files.storage import default_storage
 
-from .auth import create_token
+from django.middleware.csrf import get_token
 from pprint import pprint
 
 
@@ -23,7 +23,7 @@ def not_connected(request):
 #endregion
 
 #region User
-@csrf_exempt
+# @csrf_exempt
 @login_required(login_url='/not_connected/', redirect_field_name='next')
 def get_user_sinistre(request,id):
     try:
@@ -57,7 +57,6 @@ def save_user(request):
         form = UsersForm(request.POST)
         password = request.POST.get('password')
         if form.is_valid():
-            print("VALIDDDDDD")
 
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
@@ -113,7 +112,7 @@ def delete_user(request,id):
 #endregion
 
 #region sinistre
-@csrf_exempt
+
 def save_sinistre(request):
     if request.method == 'POST':
         form = SinistresForm(request.POST)
@@ -238,3 +237,25 @@ def delete_file(request,id):
     return HttpResponse('Le formulaire upload a été supprimer avec succès !')
 
 #endregion
+
+#region auth
+def get_csrf_token(request):
+    token = get_token(request)
+    return JsonResponse({'csrfToken': token})
+#endregion
+
+@csrf_exempt
+def checkheader(request):
+
+    print("get",request.headers)
+    print("method",request.method)
+
+    print('********************')
+    print('checkheader')
+    print('********************')
+    for key, value in request.headers.items():
+        print(key, value)
+    
+    print('********************')
+    print('********************')
+    return HttpResponse('TEST !!')
