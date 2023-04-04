@@ -8,6 +8,12 @@ class UsersReadSerializers(serializers.ModelSerializer):
         fields = ['id','username','email','first_name','last_name','contract_number']
         read_only_fields = ['username','email','first_name','last_name','contract_number']
 
+class UsersResetPasswordSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Users
+        fields = ['username','password']
+        read_only_fields = ['username','password']
+
 class UsersSerializers(serializers.ModelSerializer):
     class Meta:
         model = Users
