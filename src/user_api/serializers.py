@@ -11,8 +11,8 @@ class UsersReadSerializers(serializers.ModelSerializer):
 class UsersResetPasswordSerializers(serializers.ModelSerializer):
     class Meta:
         model = Users
-        fields = ['username','password']
-        read_only_fields = ['username','password']
+        fields = ['password']
+        read_only_fields = ['password']
 
 class UsersSerializers(serializers.ModelSerializer):
     class Meta:
