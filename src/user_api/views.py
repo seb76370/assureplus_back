@@ -76,13 +76,9 @@ class resetView(APIView):
             token = jwt.decode(token,env('SECRET_KEY'),algorithms=['HS256'])
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthenticated')
-        
-        print('newPassword',newPassword)
 
         serializer = UsersResetPasswordSerializers(data=request.data)
         serializer.is_valid(raise_exception=True)
-
-        print(token['id'])
         user = Users.objects.filter(id=token['id']).first()
         user.set_password(newPassword)
         user.save()
