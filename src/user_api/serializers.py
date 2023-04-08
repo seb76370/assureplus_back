@@ -5,8 +5,8 @@ from .models import Users
 class UsersReadSerializers(serializers.ModelSerializer):
     class Meta:
         model = Users
-        fields = ['id','username','email','first_name','last_name','contract_number']
-        read_only_fields = ['username','email','first_name','last_name','contract_number']
+        fields = ['id','username','email','first_name','last_name','contract_number','street','zipcode','city']
+        read_only_fields = ['username','email','first_name','last_name','contract_number','contract_number','street','zipcode','city']
 
 class UsersResetPasswordSerializers(serializers.ModelSerializer):
     class Meta:

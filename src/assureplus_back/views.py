@@ -113,6 +113,7 @@ def delete_user(request,id):
 
 #region sinistre
 
+@csrf_exempt
 def save_sinistre(request):
     if request.method == 'POST':
         form = SinistresForm(request.POST)

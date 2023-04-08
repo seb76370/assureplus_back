@@ -61,8 +61,6 @@ class userView(APIView):
         
         user = Users.objects.filter(id=payload['id']).first()
         serializer = UsersReadSerializers(user)
-        # serializer = UsersSerializers(user)
-
         return Response(serializer.data)
     
 class resetView(APIView):
