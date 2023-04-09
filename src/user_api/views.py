@@ -1,3 +1,4 @@
+from pprint import pprint
 from rest_framework.views import APIView
 from rest_framework.exceptions import AuthenticationFailed
 from user_api.models import Users
@@ -18,15 +19,26 @@ class registerView(APIView):
     
 class loginView(APIView):
     def post(self, request):
+        response =Response()
+        # headers = request.META
+
         email = request.data.get('email')
         password = request.data.get('password')
         user = Users.objects.filter(email=email).first()
 
-        if user is None:
-            raise AuthenticationFailed('User not found')
+        if user is None:                                
+            response.data = {
+                'message': 'user unknow',
+            }
+
+            return response
         
-        if not user.check_password(password):
-            raise AuthenticationFailed('Incorrect password')
+        if not user.check_password(password):                             
+            response.data = {
+                'message': 'Login/password fail',
+            }
+
+            return response
         
 
         payload = {

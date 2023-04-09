@@ -24,7 +24,7 @@ def not_connected(request):
 
 #region User
 # @csrf_exempt
-@login_required(login_url='/not_connected/', redirect_field_name='next')
+#@login_required(login_url='/not_connected/', redirect_field_name='next')
 def get_user_sinistre(request,id):
     try:
             user = Users.objects.get(id=id)
@@ -66,7 +66,7 @@ def save_user(request):
 
             User.objects.create_user(username=f"{first_name} {last_name}", password=password, email=email)
             form.save()
-            return HttpResponse('Le formulaire UsersForm a été soumis avec succès !')
+            return HttpResponse({'Le formulaire UsersForm a été soumis avec succès !'})
         else:
             errors = form.errors.as_data()
             return HttpResponse(errors)
@@ -118,8 +118,9 @@ def save_sinistre(request):
     if request.method == 'POST':
         form = SinistresForm(request.POST)
         if form.is_valid():
-            form.save()
-            return HttpResponse('Le formulaire save_sinistre a été soumis avec succès !')
+            sinistre = form.save()
+            
+            return JsonResponse({'message' : 'success','id':sinistre.id})
         else:
             return HttpResponse("Form save_sinistre Invalide")
 
