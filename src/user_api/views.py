@@ -1,5 +1,6 @@
 from pprint import pprint
 from rest_framework.views import APIView
+
 from rest_framework.exceptions import AuthenticationFailed
 from user_api.models import Users
 from .serializers import UsersReadSerializers, UsersResetPasswordSerializers, UsersSerializers
@@ -9,6 +10,7 @@ import jwt, datetime
 import environ
 env = environ.Env()
 environ.Env.read_env()
+
 
 class registerView(APIView):
     def post(self, request):
@@ -62,18 +64,24 @@ class loginView(APIView):
 class userView(APIView):
 
     def post(self, request):
+        isconnected = True
         token = request.data.get('jwt')
         if not jwt:
-            raise AuthenticationFailed('Unauthenticated')
+            raise AuthenticationFailed({"status_code":502,"message":"User not conected"})
         
         try:
             payload = jwt.decode(token,env('SECRET_KEY'),algorithms=['HS256'])
         except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('Unauthenticated')
+            isconnected = False
         
-        user = Users.objects.filter(id=payload['id']).first()
-        serializer = UsersReadSerializers(user)
-        return Response(serializer.data)
+        if isconnected:
+            user = Users.objects.filter(id=payload['id']).first()
+            serializer = UsersReadSerializers(user)
+
+            return Response(serializer.data)
+        else:
+            print("raiseeeee")
+            raise AuthenticationFailed({"status_code":502,"message":"Erreur JWT"})
     
 class resetView(APIView):
 

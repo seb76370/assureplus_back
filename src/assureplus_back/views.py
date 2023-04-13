@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Comments, Sinistres, Users, files_upload
 from django.contrib.auth.models import User
 from django.core.files.storage import default_storage
-
+from rest_framework.decorators import api_view
 from django.middleware.csrf import get_token
 from pprint import pprint
 
@@ -18,6 +18,7 @@ from pprint import pprint
 def index(request):
     return HttpResponse("Welcome to Assureplus API")
 
+@api_view(['GET'])
 def not_connected(request):
     return JsonResponse({'code':401,'message':"User not connected"})
 #endregion
@@ -115,6 +116,7 @@ def delete_user(request,id):
 
 @csrf_exempt
 def save_sinistre(request):
+    print (request)
     if request.method == 'POST':
         form = SinistresForm(request.POST)
         if form.is_valid():
@@ -220,7 +222,9 @@ def upload_file(request):
         for file in files:
             new_file = files_upload(sinistre=s, title=title, file=file)
             new_file.save()
-        return HttpResponse('Le formulaire upload a été soumis avec succès !')
+
+        # return HttpResponse('Le formulaire upload a été soumis avec succès !')
+        return JsonResponse({"statusCode":"200","message":'Le formulaire upload a été soumis avec succès !'})
     else:
         errors = form.errors.as_data()
         return HttpResponse(errors)
