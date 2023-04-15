@@ -1,8 +1,11 @@
 import json
 import os
+from pprint import pprint
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
+
+from user_api.decorateurjwt import jwt_required
 from .forms import SinistresForm, UploadFileForm, UsersForm, CommentsForm
 from django.views.decorators.csrf import csrf_exempt
 
@@ -24,31 +27,47 @@ def not_connected(request):
 #endregion
 
 #region User
-# @csrf_exempt
-#@login_required(login_url='/not_connected/', redirect_field_name='next')
+#@csrf_exempt
+@jwt_required
 def get_user_sinistre(request,id):
+
     try:
-            user = Users.objects.get(id=id)
-            sinistres = Sinistres.objects.filter(user=id)
-            comments = Comments.objects.filter(sinistre__user=id)
-            files = files_upload.objects.filter(sinistre__user=id)
+        user = Users.objects.get(id=id)
+        sinistres = Sinistres.objects.filter(user=id)
+        comments = Comments.objects.filter(sinistre__user=id)
+        files = files_upload.objects.filter(sinistre__user=id)
 
-            # Créer un dictionnaire pour stocker les données de l'utilisateur et les données associées
-            user_data = {
-                'id': user.id,
-                'first_name': user.first_name,
-                'last_name': user.last_name,
-                'street': user.street,
-                'zipcode': user.zipcode,
-                'city': user.city,
-                'date_time': user.date_time,
-                'contract_number': user.contract_number,
-                'sinistres': list(sinistres.values()),
-                'comments': list(comments.values()),
-                'files': list(files.values()),
-            }
+        user_data = {
+            'id': user.id,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'street': user.street,
+            'zipcode': user.zipcode,
+            'city': user.city,
+            'date_time': user.date_time,
+            'contract_number': user.contract_number,
+        }
 
-            return JsonResponse(user_data)
+        indexsinistres = 0
+        user_data["sinistres"] = []
+
+        for sinisitre in sinistres.values():
+            id:number = sinisitre['id']
+            user_data["sinistres"].append(sinisitre)
+            #ajout comments
+            user_data['sinistres'][indexsinistres]['comments'] = []
+            for comment in comments.filter(sinistre_id = id).values():
+                user_data['sinistres'][indexsinistres]['comments'].append(comment)
+
+            #ajout upload
+            user_data['sinistres'][indexsinistres]['files'] = []
+            for file in files.filter(sinistre_id = id).values():
+                user_data['sinistres'][indexsinistres]['files'].append(file)
+            
+            indexsinistres+=1
+
+
+        return JsonResponse(user_data)
     except Users.DoesNotExist:
         return JsonResponse({'error': 'User not found'}, status=404)
 

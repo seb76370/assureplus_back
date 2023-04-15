@@ -5,6 +5,7 @@ from user_api.models import Users
 class Sinistres(models.Model):
     user = models.ForeignKey(Users, on_delete=models.CASCADE, related_name='sinistre',null = True)
     description = models.TextField()
+    cloture = models.BooleanField(default=False)
     date_time = models.DateTimeField(default=datetime.now,)
 
 class Comments(models.Model):
