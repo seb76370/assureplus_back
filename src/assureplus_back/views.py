@@ -30,7 +30,7 @@ def not_connected(request):
 #@csrf_exempt
 @jwt_required
 def get_user_sinistre(request,id):
-
+    print("start get user sinsitre")
     try:
         user = Users.objects.get(id=id)
         sinistres = Sinistres.objects.filter(user=id)
@@ -66,7 +66,7 @@ def get_user_sinistre(request,id):
             
             indexsinistres+=1
 
-
+        print("azertyuiop")
         return JsonResponse(user_data)
     except Users.DoesNotExist:
         return JsonResponse({'error': 'User not found'}, status=404)

@@ -65,9 +65,6 @@ class userView(APIView):
 
     def post(self, request):
         isconnected = True
-        print("**********")
-        print(type(request))
-        print("**********")
         token = request.data.get('jwt')
         if not jwt:
             raise AuthenticationFailed({"status_code":502,"message":"User not conected"})

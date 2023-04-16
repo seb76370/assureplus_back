@@ -22,6 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY')
 
@@ -32,14 +33,15 @@ CORS_ORIGIN_ALLOW_ALL = False
 
 CORS_ALLOW_METHODS = ['GET','POST','OPTIONS','PUT','DELETE']
 
-CORS_ALLOW_HEADERS = ['accept','accept-encoding','authorization','content-type','dnt','origin','user-agent','x-csrftoken','x-requested-with']
+# CORS_ALLOW_HEADERS = ['accept','accept-encoding','authorization','content-type','dnt','origin','user-agent','x-csrftoken','x-requested-with']
+CORS_ALLOW_HEADERS = ['*']
 
 CORS_ALLOW_CREDENTIALS = True
 
-# CORS_ORIGIN_WHITELIST = [
-#     'http://localhost:4200',
-#     'http://127.0.0.1:4200',
-# ]
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:4200',
+    'http://127.0.0.1:4200',
+]
 
 # Application definition
 
