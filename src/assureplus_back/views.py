@@ -1,15 +1,18 @@
 import json
 import os
+from pprint import pprint
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
+
+from user_api.decorateurjwt import jwt_required
 from .forms import SinistresForm, UploadFileForm, UsersForm, CommentsForm
 from django.views.decorators.csrf import csrf_exempt
 
 from .models import Comments, Sinistres, Users, files_upload
 from django.contrib.auth.models import User
 from django.core.files.storage import default_storage
-
+from rest_framework.decorators import api_view
 from django.middleware.csrf import get_token
 from pprint import pprint
 
@@ -18,36 +21,53 @@ from pprint import pprint
 def index(request):
     return HttpResponse("Welcome to Assureplus API")
 
+@api_view(['GET'])
 def not_connected(request):
     return JsonResponse({'code':401,'message':"User not connected"})
 #endregion
 
 #region User
-# @csrf_exempt
-@login_required(login_url='/not_connected/', redirect_field_name='next')
+#@csrf_exempt
+@jwt_required
 def get_user_sinistre(request,id):
+    print("start get user sinsitre")
     try:
-            user = Users.objects.get(id=id)
-            sinistres = Sinistres.objects.filter(user=id)
-            comments = Comments.objects.filter(sinistre__user=id)
-            files = files_upload.objects.filter(sinistre__user=id)
+        user = Users.objects.get(id=id)
+        sinistres = Sinistres.objects.filter(user=id)
+        comments = Comments.objects.filter(sinistre__user=id)
+        files = files_upload.objects.filter(sinistre__user=id)
 
-            # Créer un dictionnaire pour stocker les données de l'utilisateur et les données associées
-            user_data = {
-                'id': user.id,
-                'first_name': user.first_name,
-                'last_name': user.last_name,
-                'street': user.street,
-                'zipcode': user.zipcode,
-                'city': user.city,
-                'date_time': user.date_time,
-                'contract_number': user.contract_number,
-                'sinistres': list(sinistres.values()),
-                'comments': list(comments.values()),
-                'files': list(files.values()),
-            }
+        user_data = {
+            'id': user.id,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'street': user.street,
+            'zipcode': user.zipcode,
+            'city': user.city,
+            'date_time': user.date_time,
+            'contract_number': user.contract_number,
+        }
 
-            return JsonResponse(user_data)
+        indexsinistres = 0
+        user_data["sinistres"] = []
+
+        for sinisitre in sinistres.values():
+            id:number = sinisitre['id']
+            user_data["sinistres"].append(sinisitre)
+            #ajout comments
+            user_data['sinistres'][indexsinistres]['comments'] = []
+            for comment in comments.filter(sinistre_id = id).values():
+                user_data['sinistres'][indexsinistres]['comments'].append(comment)
+
+            #ajout upload
+            user_data['sinistres'][indexsinistres]['files'] = []
+            for file in files.filter(sinistre_id = id).values():
+                user_data['sinistres'][indexsinistres]['files'].append(file)
+            
+            indexsinistres+=1
+
+        print("azertyuiop")
+        return JsonResponse(user_data)
     except Users.DoesNotExist:
         return JsonResponse({'error': 'User not found'}, status=404)
 
@@ -66,7 +86,7 @@ def save_user(request):
 
             User.objects.create_user(username=f"{first_name} {last_name}", password=password, email=email)
             form.save()
-            return HttpResponse('Le formulaire UsersForm a été soumis avec succès !')
+            return HttpResponse({'Le formulaire UsersForm a été soumis avec succès !'})
         else:
             errors = form.errors.as_data()
             return HttpResponse(errors)
@@ -113,12 +133,15 @@ def delete_user(request,id):
 
 #region sinistre
 
+@csrf_exempt
 def save_sinistre(request):
+    print (request)
     if request.method == 'POST':
         form = SinistresForm(request.POST)
         if form.is_valid():
-            form.save()
-            return HttpResponse('Le formulaire save_sinistre a été soumis avec succès !')
+            sinistre = form.save()
+            
+            return JsonResponse({'message' : 'success','id':sinistre.id})
         else:
             return HttpResponse("Form save_sinistre Invalide")
 
@@ -218,7 +241,9 @@ def upload_file(request):
         for file in files:
             new_file = files_upload(sinistre=s, title=title, file=file)
             new_file.save()
-        return HttpResponse('Le formulaire upload a été soumis avec succès !')
+
+        # return HttpResponse('Le formulaire upload a été soumis avec succès !')
+        return JsonResponse({"statusCode":"200","message":'Le formulaire upload a été soumis avec succès !'})
     else:
         errors = form.errors.as_data()
         return HttpResponse(errors)

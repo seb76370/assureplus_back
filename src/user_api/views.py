@@ -1,4 +1,6 @@
+from pprint import pprint
 from rest_framework.views import APIView
+
 from rest_framework.exceptions import AuthenticationFailed
 from user_api.models import Users
 from .serializers import UsersReadSerializers, UsersResetPasswordSerializers, UsersSerializers
@@ -9,6 +11,7 @@ import environ
 env = environ.Env()
 environ.Env.read_env()
 
+
 class registerView(APIView):
     def post(self, request):
         serializer = UsersSerializers(data=request.data)
@@ -18,15 +21,26 @@ class registerView(APIView):
     
 class loginView(APIView):
     def post(self, request):
+        response =Response()
+        # headers = request.META
+
         email = request.data.get('email')
         password = request.data.get('password')
         user = Users.objects.filter(email=email).first()
 
-        if user is None:
-            raise AuthenticationFailed('User not found')
+        if user is None:                                
+            response.data = {
+                'message': 'user unknow',
+            }
+
+            return response
         
-        if not user.check_password(password):
-            raise AuthenticationFailed('Incorrect password')
+        if not user.check_password(password):                             
+            response.data = {
+                'message': 'Login/password fail',
+            }
+
+            return response
         
 
         payload = {
@@ -50,20 +64,24 @@ class loginView(APIView):
 class userView(APIView):
 
     def post(self, request):
+        isconnected = True
         token = request.data.get('jwt')
         if not jwt:
-            raise AuthenticationFailed('Unauthenticated')
+            raise AuthenticationFailed({"status_code":502,"message":"User not conected"})
         
         try:
             payload = jwt.decode(token,env('SECRET_KEY'),algorithms=['HS256'])
         except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('Unauthenticated')
+            isconnected = False
         
-        user = Users.objects.filter(id=payload['id']).first()
-        serializer = UsersReadSerializers(user)
-        # serializer = UsersSerializers(user)
+        if isconnected:
+            user = Users.objects.filter(id=payload['id']).first()
+            serializer = UsersReadSerializers(user)
 
-        return Response(serializer.data)
+            return Response(serializer.data)
+        else:
+            print("raiseeeee")
+            raise AuthenticationFailed({"status_code":502,"message":"Erreur JWT"})
     
 class resetView(APIView):
 
