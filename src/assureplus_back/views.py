@@ -1,6 +1,7 @@
 import json
 import os
 from pprint import pprint
+from django.forms import model_to_dict
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
@@ -178,14 +179,20 @@ def modify_sinistre(request,id):
 
 #region comment
 @csrf_exempt
+@jwt_required
 def save_comment(request):
     if request.method == 'POST':
         form = CommentsForm(request.POST)
+        print(form)
         if form.is_valid():
-            form.save()
-            return HttpResponse('Le formulaire CommentsForm a été soumis avec succès !')
+            comment = form.save()
+            comment_dict = model_to_dict(comment)
+            return JsonResponse(comment_dict)
+            
         else:
+            print("error form comment")
             errors = form.errors.as_data()
+            print(errors)
             return HttpResponse(errors)
         
 @csrf_exempt
