@@ -43,10 +43,10 @@ CORS_ORIGIN_WHITELIST = [
     'http://localhost:4200',
     'http://127.0.0.1:4200',
 ]
-os.environ['HTTPS'] = "on"
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-SECURE_SSL_REDIRECT = True
+# os.environ['HTTPS'] = "on"
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
+# SECURE_SSL_REDIRECT = True
 
 # Application definition
 
