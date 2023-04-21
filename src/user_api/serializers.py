@@ -17,7 +17,7 @@ class UsersResetPasswordSerializers(serializers.ModelSerializer):
 class UsersSerializers(serializers.ModelSerializer):
     class Meta:
         model = Users
-        fields = ['id','username','email','password','is_admin']
+        fields = ['id','username','first_name','last_name','email','password','is_admin','street','zipcode','city','phone_number','contract_number']
         extra_kwargs = {'password':{'write_only':True}}
 
     def create(self, validated_data):
