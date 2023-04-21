@@ -234,6 +234,7 @@ def modify_comment(request,id):
 #region upload
 @csrf_exempt
 def upload_file(request):
+    print("upload")
     if request.method != 'POST':
         return HttpResponse('not a Post Request')
     form = UploadFileForm(request.POST, request.FILES)
