@@ -26,4 +26,4 @@ jobs:
             cd /website/assureplus_back
             git pull
             pip3 install -r requirements.txt
-            
+            pm2 start assureplusback
