@@ -1,0 +1,13 @@
+[Unit]
+Description=gunicorn daemon
+Requires=gunicorn.socket
+After=network.target
+
+[Service]
+User=root
+Group=www-data
+WorkingDirectory=/website/assureplus_back/src
+ExecStart=/website/assureplus_back/env/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/gunicorn.sock assureplus_back.wsgi:application
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,25 @@
+server{
+	listen 8000;
+	server_name 127.0.0.1;
+
+	location = /favicon.ico {
+		access_log off;
+		log_not_found off;
+	}
+
+	location /static/ {
+		root /website/assureplus_back;
+	}
+
+        location /media/ {
+                root /website/assureplus_back;
+        }
+
+        location / {
+		include proxy_params;              
+		proxy_pass http://unix:/etc/systemd/system/gunicorn.socket;
+        }
+
+
+
+}
