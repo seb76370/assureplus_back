@@ -111,6 +111,7 @@ def modify_user(request,id):
         
 @csrf_exempt
 def delete_user(request,id):
+
     try:
         user = Users.objects.get(id=id)
     except Exception:
@@ -118,16 +119,15 @@ def delete_user(request,id):
 
     if request.method != 'DELETE':
         return HttpResponse("Not DELETE Request")
-    
-    datas:dict = get_user_sinistre(None, id)
 
-    print(type(datas))
-    files_path:str = f'./archives/user_{id}_contract_{user.contract_number}.json'
-    # print(files_path)
-    json_object = json.loads(datas.content)
-    print(json_object)
-    with open(files_path, "w",encoding='utf8') as outfile:
-        json.dump(json_object, outfile, indent= 4)
+    # datas:dict = get_user_sinistre(None, id)
+
+    # files_path:str = f'./archives/user_{id}_contract_{user.contract_number}.json'
+    # # print(files_path)
+    # json_object = json.loads(datas.content)
+    # print(json_object)
+    # with open(files_path, "w",encoding='utf8') as outfile:
+    #     json.dump(json_object, outfile, indent= 4)
     user.delete()
     return HttpResponse('Le formulaire UsersForm a été update avec succès !')
 #endregion

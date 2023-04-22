@@ -22,7 +22,7 @@ urlpatterns = [
     path('save_user/', save_user, name ='save_user'),
     path('get_user_sinistre/<int:id>', get_user_sinistre, name ='get_user_sinistre'),
     path('modify_user/<int:id>', modify_user, name ='modify_user'),
-    path('delete_user/<int:id>', delete_user, name ='modify_user'),
+    path('delete_user/<int:id>', delete_user, name ='delete_user'),
 #endregion
 
 #region comment
