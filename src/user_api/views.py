@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 
 from rest_framework.exceptions import AuthenticationFailed
 from user_api.models import Users
-from .serializers import UsersReadSerializers, UsersResetPasswordSerializers, UsersSerializers
+from .serializers import UsersListSerializers, UsersReadSerializers, UsersResetPasswordSerializers, UsersSerializers
 from rest_framework.response import Response
 import jwt, datetime
 
@@ -11,6 +11,13 @@ import environ
 env = environ.Env()
 environ.Env.read_env()
 
+
+class ListUser(APIView):
+    def get(self, request):
+        users = Users.objects.all()
+        serializer = UsersListSerializers(users, many=True)
+        print(users)
+        return Response(serializer.data)
 
 class registerView(APIView):
     def post(self, request):
@@ -77,7 +84,7 @@ class userView(APIView):
         if isconnected:
             user = Users.objects.filter(id=payload['id']).first()
             serializer = UsersReadSerializers(user)
-
+            print(serializer.data)
             return Response(serializer.data)
         else:
             print("raiseeeee")
