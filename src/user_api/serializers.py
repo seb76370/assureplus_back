@@ -12,8 +12,8 @@ class UsersListSerializers(serializers.ModelSerializer):
 class UsersReadSerializers(serializers.ModelSerializer):
     class Meta:
         model = Users
-        fields = ['id','username','email','first_name','last_name','contract_number','street','zipcode','city','is_admin']
-        read_only_fields = ['username','email','first_name','last_name','contract_number','contract_number','street','zipcode','city','is_admin']
+        fields = ['id','username','email','first_name','last_name','phone_number','contract_number','street','zipcode','city','is_admin']
+        read_only_fields = ['username','email','first_name','last_name','phone_number','contract_number','contract_number','street','zipcode','city','is_admin']
 
 class UsersResetPasswordSerializers(serializers.ModelSerializer):
     class Meta:
