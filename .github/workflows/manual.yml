@@ -26,4 +26,7 @@ jobs:
             cd /website/assureplus_back
             git pull
             pip3 install -r requirements.txt
+            cd /website/test_unitaire_assureplus
+            source venv/Scripts/activate
+            python3 test_unitaire.py
             pm2 start assureplusback
